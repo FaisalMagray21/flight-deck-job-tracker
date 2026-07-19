@@ -35,6 +35,21 @@ input, select, button, textarea {
   border-radius: 999px;
 }
 
+/* Dark mode mein input/select text aur placeholder better contrast ke liye */
+.dark input,
+.dark select,
+.dark textarea {
+  color: #E8EAED;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6B7280;
+}
+.dark select option {
+  background: #111827;
+  color: #E8EAED;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

@@ -8,15 +8,16 @@ function renderApp() {
   const container = document.getElementById("app");
   const apps = getVisibleApplications();
   const totalCount = getAllApplications().length;
+  const isDark = document.documentElement.classList.contains("dark");
 
   let html = "";
 
-  // Header
+  // Header — refined dark mode ke sath
   html += `
-    <header class="border-b border-[#E5E0D5] dark:border-[#1F2937] px-4 sm:px-6 py-4 sticky top-0 bg-[#FAF7F0]/95 backdrop-blur z-10">
+    <header class="border-b border-[#E5E0D5] dark:border-[#1F2937] px-4 sm:px-6 py-4 sticky top-0 bg-[#FAF7F0]/95 dark:bg-[#0A0E1A]/95 backdrop-blur z-10">
       <div class="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-[#1A1D29] flex items-center justify-center flex-shrink-0">
+          <div class="w-9 h-9 rounded-lg bg-[#1A1D29] dark:bg-[#1F2937] border border-transparent dark:border-amber/30 flex items-center justify-center flex-shrink-0">
             <span class="text-amber font-mono font-semibold text-xs">FD</span>
           </div>
           <div>
@@ -24,20 +25,28 @@ function renderApp() {
             <p class="text-[10px] sm:text-[11px] font-mono text-[#8B93A7] tracking-wide">JOB APPLICATION CONTROL TOWER</p>
           </div>
         </div>
-        <button id="add-btn" class="px-4 py-2.5 rounded-lg bg-[#1A1D29] text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition flex items-center justify-center gap-2 w-full sm:w-auto">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          Add Application
-        </button>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button id="theme-toggle" class="w-10 h-10 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] flex items-center justify-center hover:bg-black/5 dark:hover:bg-white/5 transition flex-shrink-0 text-[#1A1D29] dark:text-[#E8EAED]">
+            ${isDark ? `
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+            ` : `
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            `}
+          </button>
+          <button id="add-btn" class="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-[#1A1D29] dark:bg-[#1F2937] dark:border dark:border-amber/40 text-white dark:text-amber text-sm font-semibold hover:opacity-90 dark:hover:bg-amber/10 active:scale-[0.98] transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            Add Application
+          </button>
+        </div>
       </div>
     </header>
   `;
 
   html += `<main class="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">`;
 
-  // Data backup reminder banner — sirf tab dikhega jab kam se kam 1 application ho
   if (totalCount > 0) {
     html += `
-      <div class="flex items-start gap-2 bg-[#FDF6E3] border border-amber/30 rounded-lg px-3 py-2.5 mb-5 text-[12px] text-[#8A6D1D]">
+      <div class="flex items-start gap-2 bg-[#FDF6E3] dark:bg-[#1F1A0D] border border-amber/30 dark:border-amber/20 rounded-lg px-3 py-2.5 mb-5 text-[12px] text-[#8A6D1D] dark:text-amber">
         <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         <span>Your data lives only in this browser. Export a CSV backup regularly so you never lose it.</span>
       </div>
@@ -48,11 +57,10 @@ function renderApp() {
   html += renderToolbar();
 
   if (apps.length === 0) {
-    // Naya: alag message empty-database vs no-search-results ke liye
     if (totalCount === 0) {
       html += `
         <div class="text-center py-16 px-4">
-          <div class="w-12 h-12 rounded-full bg-[#F5F2EA] flex items-center justify-center mx-auto mb-4">
+          <div class="w-12 h-12 rounded-full bg-[#F5F2EA] dark:bg-[#111827] flex items-center justify-center mx-auto mb-4">
             <svg class="w-6 h-6 text-[#8B93A7]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
           </div>
           <p class="font-display font-semibold text-base">Board's empty</p>
@@ -62,7 +70,7 @@ function renderApp() {
     } else {
       html += `
         <div class="text-center py-16 px-4">
-          <div class="w-12 h-12 rounded-full bg-[#F5F2EA] flex items-center justify-center mx-auto mb-4">
+          <div class="w-12 h-12 rounded-full bg-[#F5F2EA] dark:bg-[#111827] flex items-center justify-center mx-auto mb-4">
             <svg class="w-6 h-6 text-[#8B93A7]" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
           </div>
           <p class="font-display font-semibold text-base">No matches found</p>
@@ -82,8 +90,7 @@ function renderApp() {
 
   html += renderModal();
 
-  // Toast container — hamesha maujood rahega, hidden jab tak trigger na ho
-  html += `<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#1A1D29] text-white text-sm px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 z-50"></div>`;
+  html += `<div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#1A1D29] dark:bg-amber text-white dark:text-[#0A0E1A] text-sm px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 z-50"></div>`;
 
   container.innerHTML = html;
 
@@ -124,11 +131,11 @@ function renderToolbar() {
         <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8B93A7]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
         <input id="search-input" type="text" placeholder="Search by company or role..."
           value="${currentSearch}"
-          class="w-full pl-9 pr-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber/40">
+          class="w-full pl-9 pr-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] text-sm bg-white dark:bg-[#111827] dark:text-[#E8EAED] focus:outline-none focus:ring-2 focus:ring-amber/40">
       </div>
 
       <div class="flex gap-2">
-        <select id="filter-status" class="flex-1 sm:flex-none px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber/40">
+        <select id="filter-status" class="flex-1 sm:flex-none px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] text-sm bg-white dark:bg-[#111827] dark:text-[#E8EAED] focus:outline-none focus:ring-2 focus:ring-amber/40">
           <option value="all">All Status</option>
           <option value="Applied">Applied</option>
           <option value="Interview">Interview</option>
@@ -136,13 +143,13 @@ function renderToolbar() {
           <option value="Rejected">Rejected</option>
         </select>
 
-        <select id="sort-order" class="flex-1 sm:flex-none px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber/40">
+        <select id="sort-order" class="flex-1 sm:flex-none px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] text-sm bg-white dark:bg-[#111827] dark:text-[#E8EAED] focus:outline-none focus:ring-2 focus:ring-amber/40">
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
         </select>
       </div>
 
-      <button id="export-btn" class="px-4 py-2.5 rounded-lg border border-[#E5E0D5] text-sm font-medium bg-white hover:bg-black/5 transition flex items-center justify-center gap-2">
+      <button id="export-btn" class="px-4 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] text-sm font-medium bg-white dark:bg-[#111827] hover:bg-black/5 dark:hover:bg-white/5 transition flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M7 10l5 5 5-5M12 15V3"/></svg>
         <span class="hidden sm:inline">Export</span>
       </button>
@@ -185,14 +192,13 @@ function renderStats() {
   let cardsHtml = "";
   for (let i = 0; i < cards.length; i++) {
     cardsHtml += `
-      <div class="border border-[#E5E0D5] rounded-xl p-3 sm:p-4 text-center bg-white shadow-sm">
+      <div class="border border-[#E5E0D5] dark:border-[#1F2937] rounded-xl p-3 sm:p-4 text-center bg-white dark:bg-[#111827] shadow-sm">
         <p class="text-[9px] sm:text-[10px] font-mono text-[#8B93A7] tracking-wider mb-1">${cards[i].label}</p>
         <p class="text-lg sm:text-xl font-display font-bold ${cards[i].color}">${cards[i].value}</p>
       </div>
     `;
   }
 
-  // Bonus: chhota horizontal bar chart — status breakdown ka visual
   let barChartHtml = "";
   if (total > 0) {
     const appliedPct = (appliedCount / total) * 100;
@@ -202,7 +208,7 @@ function renderStats() {
 
     barChartHtml = `
       <div class="mb-6">
-        <div class="w-full h-2.5 rounded-full overflow-hidden flex bg-[#F0EDE4]">
+        <div class="w-full h-2.5 rounded-full overflow-hidden flex bg-[#F0EDE4] dark:bg-[#1F2937]">
           <div style="width:${appliedPct}%; background:#FBBF24;"></div>
           <div style="width:${interviewPct}%; background:#38BDF8;"></div>
           <div style="width:${offerPct}%; background:#34D399;"></div>
@@ -221,13 +227,12 @@ function renderStats() {
   return `<div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-4">${cardsHtml}</div>${barChartHtml}`;
 }
 
-// Ek single application ka card
 function renderApplicationCard(app) {
   const statusInfo = STATUS_CONFIG[app.status];
   const followUp = needsFollowUp(app);
   const daysAgo = daysSince(app.dateApplied);
+  const isDark = document.documentElement.classList.contains("dark");
 
-  // Naya: har card pe "days ago" text (follow-up wale alag color mein)
   let daysAgoText;
   if (daysAgo === 0) {
     daysAgoText = "Applied today";
@@ -249,7 +254,7 @@ function renderApplicationCard(app) {
 
   let companyTypeHtml = "";
   if (app.companyType && app.companyType !== "") {
-    companyTypeHtml = `<span class="text-[10px] font-mono text-[#8B93A7] border border-[#E5E0D5] rounded-full px-2 py-0.5">${app.companyType}</span>`;
+    companyTypeHtml = `<span class="text-[10px] font-mono text-[#8B93A7] border border-[#E5E0D5] dark:border-[#1F2937] rounded-full px-2 py-0.5">${app.companyType}</span>`;
   }
 
   let hrEmailHtml = "";
@@ -262,12 +267,10 @@ function renderApplicationCard(app) {
     `;
   }
 
-  // Naya: notes preview (agar notes hain to chhota sa text card mein dikhega)
   let notesHtml = "";
   if (app.notes && app.notes !== "") {
-    notesHtml = `<p class="text-[12px] text-[#6B7280] mt-2 bg-[#F5F2EA] rounded-md px-2.5 py-1.5">${app.notes}</p>`;
+    notesHtml = `<p class="text-[12px] text-[#4B5163] dark:text-[#C5CAD3] mt-2 bg-[#F5F2EA] dark:bg-[#1a2030] rounded-md px-2.5 py-1.5">${app.notes}</p>`;
   }
-
   return `
     <div class="border border-[#E5E0D5] dark:border-[#1F2937] rounded-xl p-4 bg-white dark:bg-[#111827] shadow-sm hover:shadow-md transition-shadow">
       <div class="flex items-start justify-between gap-3">
@@ -279,14 +282,14 @@ function renderApplicationCard(app) {
           <p class="text-sm text-[#8B93A7] mt-0.5">${app.role}</p>
           ${hrEmailHtml}
         </div>
-        <span class="flex-shrink-0 text-[10px] sm:text-[11px] font-mono px-2.5 py-1 rounded-full whitespace-nowrap" style="background:${statusInfo.bgTint}; color:${statusInfo.textLight}">
+        <span class="flex-shrink-0 text-[10px] sm:text-[11px] font-mono px-2.5 py-1 rounded-full whitespace-nowrap" style="background:${statusInfo.bgTint}; color:${isDark ? statusInfo.textDark : statusInfo.textLight}">
           ${statusInfo.label}
         </span>
       </div>
 
       ${notesHtml}
 
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 pt-3 border-t border-[#F0EDE4] gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 pt-3 border-t border-[#F0EDE4] dark:border-[#1F2937] gap-2">
         <div class="flex flex-col">
           <p class="text-[12px] font-mono text-[#8B93A7]">${formatDate(app.dateApplied)}</p>
           <p class="text-[11px] text-[#B4BAC7]">${daysAgoText}</p>
@@ -294,7 +297,7 @@ function renderApplicationCard(app) {
         <div class="flex items-center justify-between sm:justify-end gap-3">
           ${followUpHtml}
           <div class="flex items-center gap-1">
-            <button data-action="edit" data-id="${app.id}" class="w-8 h-8 rounded-lg hover:bg-black/5 flex items-center justify-center text-[#8B93A7] transition">
+            <button data-action="edit" data-id="${app.id}" class="w-8 h-8 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center text-[#8B93A7] transition">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             </button>
             <button data-action="delete" data-id="${app.id}" class="w-8 h-8 rounded-lg hover:bg-rose/10 flex items-center justify-center text-[#8B93A7] hover:text-rose transition">
@@ -307,14 +310,13 @@ function renderApplicationCard(app) {
   `;
 }
 
-// Modal — ab Notes field ke sath
 function renderModal() {
   return `
     <div id="modal-overlay" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-xl w-full max-w-md p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+      <div class="bg-white dark:bg-[#111827] rounded-xl w-full max-w-md p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-4">
           <h2 id="modal-title-text" class="font-display font-bold text-lg">Log Application</h2>
-          <button type="button" id="modal-close-x" class="text-[#8B93A7] hover:text-current w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5">
+          <button type="button" id="modal-close-x" class="text-[#8B93A7] hover:text-current w-8 h-8 flex items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
@@ -322,20 +324,20 @@ function renderModal() {
           <input type="hidden" id="edit-id" value="">
           <div>
             <label class="text-xs font-medium text-[#8B93A7] block mb-1">Company *</label>
-            <input id="input-company" type="text" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
+            <input id="input-company" type="text" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
           </div>
           <div>
             <label class="text-xs font-medium text-[#8B93A7] block mb-1">Role *</label>
-            <input id="input-role" type="text" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
+            <input id="input-role" type="text" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="text-xs font-medium text-[#8B93A7] block mb-1">Date Applied *</label>
-              <input id="input-date" type="date" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
+              <input id="input-date" type="date" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
             </div>
             <div>
               <label class="text-xs font-medium text-[#8B93A7] block mb-1">Status</label>
-              <select id="input-status" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
+              <select id="input-status" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
                 <option>Applied</option>
                 <option>Interview</option>
                 <option>Offer</option>
@@ -345,7 +347,7 @@ function renderModal() {
           </div>
           <div>
             <label class="text-xs font-medium text-[#8B93A7] block mb-1">Company Type (optional)</label>
-            <select id="input-company-type" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
+            <select id="input-company-type" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
               <option value="">Not specified</option>
               <option value="Product-Based">Product-Based</option>
               <option value="Service-Based">Service-Based</option>
@@ -353,16 +355,16 @@ function renderModal() {
           </div>
           <div>
             <label class="text-xs font-medium text-[#8B93A7] block mb-1">HR / Contact Email (optional)</label>
-            <input id="input-hr-email" type="email" placeholder="hr@company.com" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
+            <input id="input-hr-email" type="email" placeholder="hr@company.com" class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40">
           </div>
           <div>
             <label class="text-xs font-medium text-[#8B93A7] block mb-1">Notes (optional)</label>
-            <textarea id="input-notes" rows="2" placeholder="Referral name, interview prep, next steps..." class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] text-sm focus:outline-none focus:ring-2 focus:ring-amber/40 resize-none"></textarea>
+            <textarea id="input-notes" rows="2" placeholder="Referral name, interview prep, next steps..." class="w-full px-3 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] bg-transparent text-sm focus:outline-none focus:ring-2 focus:ring-amber/40 resize-none"></textarea>
           </div>
           <p id="form-error" class="text-rose text-xs hidden"></p>
           <div class="flex gap-2 pt-2">
-            <button type="button" id="modal-cancel" class="flex-1 py-2.5 rounded-lg border border-[#E5E0D5] text-sm font-medium hover:bg-black/5 transition">Cancel</button>
-            <button type="submit" class="flex-1 py-2.5 rounded-lg bg-[#1A1D29] text-white text-sm font-semibold hover:opacity-90 transition">Save</button>
+            <button type="button" id="modal-cancel" class="flex-1 py-2.5 rounded-lg border border-[#E5E0D5] dark:border-[#1F2937] text-sm font-medium hover:bg-black/5 dark:hover:bg-white/10 transition">Cancel</button>
+            <button type="submit" class="flex-1 py-2.5 rounded-lg bg-[#1A1D29] dark:bg-[#1F2937] dark:border dark:border-amber/40 text-white dark:text-amber text-sm font-semibold hover:opacity-90 dark:hover:bg-amber/10 transition">Save</button>
           </div>
         </form>
       </div>
@@ -390,7 +392,6 @@ function openModal(existingApp) {
     document.getElementById("edit-id").value = "";
   }
 
-  // Modal khulte hi pehle input pe focus (accessibility ke liye achha hai)
   setTimeout(function () {
     document.getElementById("input-company").focus();
   }, 50);
@@ -402,7 +403,6 @@ function closeModal() {
   document.getElementById("app-form").reset();
 }
 
-// Naya: Toast notification dikhane ka function
 function showToast(message) {
   const toast = document.getElementById("toast");
   toast.innerHTML = `
@@ -411,7 +411,6 @@ function showToast(message) {
   `;
   toast.classList.remove("hidden");
 
-  // 2.5 second baad khud gayab ho jaye
   setTimeout(function () {
     toast.classList.add("hidden");
   }, 2500);
@@ -468,7 +467,17 @@ function escapeCsvRow(rowArray) {
   return escapedValues.join(",");
 }
 
+function toggleTheme() {
+  const isDarkNow = document.documentElement.classList.toggle("dark");
+  saveTheme(isDarkNow ? "dark" : "light");
+  renderApp();
+}
+
 function attachEventListeners() {
+
+  document.getElementById("theme-toggle").addEventListener("click", function () {
+    toggleTheme();
+  });
 
   document.getElementById("search-input").addEventListener("input", function (e) {
     currentSearch = e.target.value;
@@ -510,7 +519,6 @@ function attachEventListeners() {
     }
   });
 
-  // Naya: Escape key se modal band ho
   document.addEventListener("keydown", function (e) {
     const overlay = document.getElementById("modal-overlay");
     if (e.key === "Escape" && overlay && !overlay.classList.contains("hidden")) {
@@ -546,7 +554,6 @@ function attachEventListeners() {
     if (result.success) {
       closeModal();
       renderApp();
-      // Naya: Toast dikhao save hone ke baad
       showToast(wasEdit ? "Application updated" : "Application saved");
     } else {
       const errorBox = document.getElementById("form-error");

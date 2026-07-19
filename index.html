@@ -15,6 +15,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+<script>
+  // Theme flash rokne ke liye — page render hone se pehle hi theme decide kar lete hain
+  (function () {
+    const saved = localStorage.getItem("flightdeck_theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const useDark = saved ? saved === "dark" : prefersDark;
+    if (useDark) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
+</script>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -46,11 +58,11 @@
   <!-- Simple script tags — koi type="module" nahi.
        ORDER IMPORTANT HAI: pehle utils, phir baaki -->
   <script src="src/utils/storage.js"></script>
-<script src="src/utils/date.js"></script>
-<script src="src/constants/statusConfig.js"></script>
-<script src="src/utils/validators.js"></script>
-<script src="src/hooks/useApplications.js"></script>
-<script src="src/App.js"></script>
-<script src="src/index.js"></script>
+  <script src="src/utils/date.js"></script>
+  <script src="src/constants/statusConfig.js"></script>
+  <script src="src/utils/validators.js"></script>
+  <script src="src/hooks/useApplications.js"></script>
+  <script src="src/App.js"></script>
+  <script src="src/index.js"></script>
 </body>
 </html>
