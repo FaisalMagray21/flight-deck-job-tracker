@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flight Deck — Job Application Tracker</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          amber: { DEFAULT: '#FBBF24' },
+          skyc: { DEFAULT: '#38BDF8' },
+          jade: { DEFAULT: '#34D399' },
+          rose: { DEFAULT: '#F87171' },
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"IBM Plex Mono"', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="stylesheet" href="src/styles/style.css">
+</head>
+<body class="font-body bg-[#FAF7F0] dark:bg-[#0A0E1A] text-[#1A1D29] dark:text-[#E8EAED] transition-colors duration-300 min-h-screen">
+
+  <div id="app"></div>
+
+  <!-- Simple script tags — koi type="module" nahi.
+       ORDER IMPORTANT HAI: pehle utils, phir baaki -->
+  <script src="src/utils/storage.js"></script>
+<script src="src/utils/date.js"></script>
+<script src="src/constants/statusConfig.js"></script>
+<script src="src/utils/validators.js"></script>
+<script src="src/hooks/useApplications.js"></script>
+<script src="src/App.js"></script>
+<script src="src/index.js"></script>
+</body>
+</html>

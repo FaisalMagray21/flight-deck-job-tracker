@@ -40,4 +40,4 @@ Code With Affaq Coding Challenge #1
 (LinkedIn, GitHub profile links)
 
 ## 📄 License
-MIT
+MIT 
