@@ -48,6 +48,7 @@ function renderApp() {
 }
 
 // Ek single application ka card HTML banao
+// Ek single application ka card HTML banao
 function renderApplicationCard(app) {
   const statusInfo = STATUS_CONFIG[app.status];
   const followUp = needsFollowUp(app);
@@ -64,9 +65,17 @@ function renderApplicationCard(app) {
           <p class="font-medium text-sm">${app.company}</p>
           <p class="text-sm text-[#8B93A7]">${app.role}</p>
         </div>
-        <span class="text-[11px] font-mono px-2 py-1 rounded-full" style="background:${statusInfo.bgTint}; color:${statusInfo.textLight}">
-          ${statusInfo.label}
-        </span>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] font-mono px-2 py-1 rounded-full" style="background:${statusInfo.bgTint}; color:${statusInfo.textLight}">
+            ${statusInfo.label}
+          </span>
+          <button data-action="edit" data-id="${app.id}" class="w-7 h-7 rounded-md hover:bg-black/5 flex items-center justify-center text-[#8B93A7]">
+            ✏️
+          </button>
+          <button data-action="delete" data-id="${app.id}" class="w-7 h-7 rounded-md hover:bg-rose/10 flex items-center justify-center text-[#8B93A7]">
+            🗑️
+          </button>
+        </div>
       </div>
       <div class="flex items-center justify-between mt-2">
         <p class="text-[12px] font-mono text-[#8B93A7]">${formatDate(app.dateApplied)}</p>
@@ -75,14 +84,14 @@ function renderApplicationCard(app) {
     </div>
   `;
 }
-
 // Modal (popup form) ka HTML
 function renderModal() {
   return `
     <div id="modal-overlay" class="hidden fixed inset-0 bg-black/50 items-center justify-center p-4">
       <div class="bg-white rounded-lg w-full max-w-md p-6">
-        <h2 class="font-display font-bold text-lg mb-4">Log Application</h2>
+        <h2 id="modal-title-text" class="font-display font-bold text-lg mb-4">Log Application</h2>
         <form id="app-form" class="space-y-3">
+          <input type="hidden" id="edit-id" value="">
           <div>
             <label class="text-xs font-medium text-[#8B93A7] block mb-1">Company *</label>
             <input id="input-company" type="text" class="w-full px-3 py-2 rounded-md border border-[#E5E0D5]">
@@ -114,13 +123,26 @@ function renderModal() {
     </div>
   `;
 }
-
 // Modal kholo
-function openModal() {
-  document.getElementById("modal-overlay").classList.remove("hidden");
-  document.getElementById("modal-overlay").classList.add("flex");
-}
+// Modal kholo — agar existingApp diya hai to "edit mode", warna "add mode"
+function openModal(existingApp) {
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.remove("hidden");
+  overlay.classList.add("flex");
 
+  // Agar edit kar rahe hain to form ko purani values se bhar do
+  if (existingApp) {
+    document.getElementById("modal-title-text").textContent = "Edit Application";
+    document.getElementById("edit-id").value = existingApp.id;
+    document.getElementById("input-company").value = existingApp.company;
+    document.getElementById("input-role").value = existingApp.role;
+    document.getElementById("input-date").value = existingApp.dateApplied;
+    document.getElementById("input-status").value = existingApp.status;
+  } else {
+    document.getElementById("modal-title-text").textContent = "Log Application";
+    document.getElementById("edit-id").value = "";
+  }
+}
 // Modal band karo
 function closeModal() {
   document.getElementById("modal-overlay").classList.add("hidden");
@@ -130,9 +152,9 @@ function closeModal() {
 
 // Sab buttons/form ke event listeners yahan lagate hain
 function attachEventListeners() {
-  // Add button click
+  // Add button click — naya application add karne ke liye
   document.getElementById("add-btn").addEventListener("click", function () {
-    openModal();
+    openModal(null); // null matlab "add mode", koi purana data nahi
   });
 
   // Cancel button click
@@ -140,9 +162,9 @@ function attachEventListeners() {
     closeModal();
   });
 
-  // Form submit
+  // Form submit — add ya edit dono ke liye
   document.getElementById("app-form").addEventListener("submit", function (e) {
-    e.preventDefault(); // page reload hone se roko
+    e.preventDefault();
 
     const formData = {
       company: document.getElementById("input-company").value,
@@ -153,15 +175,49 @@ function attachEventListeners() {
       notes: "",
     };
 
-    const result = addApplication(formData);
+    const editId = document.getElementById("edit-id").value;
+    let result;
+
+    if (editId) {
+      // Purani application update ho rahi hai
+      result = updateApplication(editId, formData);
+    } else {
+      // Nayi application add ho rahi hai
+      result = addApplication(formData);
+    }
 
     if (result.success) {
       closeModal();
-      renderApp(); // list dobara render karo taake naya card dikhe
+      renderApp();
     } else {
       const errorBox = document.getElementById("form-error");
       errorBox.textContent = result.errors.join(" ");
       errorBox.classList.remove("hidden");
+    }
+  });
+
+  // Edit/Delete buttons — event delegation use kar rahe hain
+  // (poore document pe listener lagate hain, phir check karte hain kaunsa button dabaya)
+  document.getElementById("app").addEventListener("click", function (e) {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return; // agar button pe click nahi hua to kuch mat karo
+
+    const id = btn.getAttribute("data-id");
+    const action = btn.getAttribute("data-action");
+
+    if (action === "edit") {
+      const app = getAllApplications().find(function (a) {
+        return a.id === id;
+      });
+      openModal(app);
+    }
+
+    if (action === "delete") {
+      const confirmDelete = confirm("Are you sure you want to delete this application?");
+      if (confirmDelete) {
+        deleteApplication(id);
+        renderApp();
+      }
     }
   });
 }
