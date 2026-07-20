@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://flight-deck-job-tracker.vercel.app/sitemap.xml
