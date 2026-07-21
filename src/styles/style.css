@@ -1,10 +1,9 @@
-/* style.css — polish, animations, aur mobile behavior */
+/* style.css — polish, animations, mobile behavior, aur print styles */
 
 body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Card entrance animation */
 .space-y-3 > div {
   animation: fadeIn 0.2s ease both;
 }
@@ -13,7 +12,6 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Toast slide-up animation */
 #toast:not(.hidden) {
   animation: toastIn 0.25s ease both;
 }
@@ -35,7 +33,6 @@ input, select, button, textarea {
   border-radius: 999px;
 }
 
-/* Dark mode mein input/select text aur placeholder better contrast ke liye */
 .dark input,
 .dark select,
 .dark textarea {
@@ -50,9 +47,55 @@ input, select, button, textarea {
   color: #E8EAED;
 }
 
+/* Print ke waqt sirf ye class wale elements chhupenge */
+.print-only {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   PRINT STYLES — clean printout ke liye
+   ============================================================ */
+@media print {
+  /* Buttons, toolbar, modal, toast — sab chhupa do */
+  .no-print,
+  #app-header {
+    display: none !important;
+  }
+
+  /* Print-only title dikhao */
+  .print-only {
+    display: block !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  #print-area {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-card {
+    break-inside: avoid;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    margin-bottom: 10px;
+  }
+
+  /* Dark mode colors print mein force light rakho */
+  .dark .print-card {
+    background: white !important;
+    color: black !important;
+    border-color: #ccc !important;
   }
 }
